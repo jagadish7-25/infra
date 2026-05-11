@@ -10,16 +10,30 @@
         name: "*"
         state: latest
 
-    - name: Install Docker
+    - name: Install container tools
       dnf:
-        name: docker
+        name: container-tools
         state: present
 
-    - name: Enable Docker service
+    - name: Install Docker packages
+      dnf:
+        name:
+          - docker
+          - containerd
+          - python3-pip
+        state: present
+
+    - name: Start and enable containerd
       service:
-        name: docker
-        enabled: yes
+        name: containerd
         state: started
+        enabled: yes
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
 
     - name: Add ec2-user to docker group
       user:
@@ -27,14 +41,14 @@
         groups: docker
         append: yes
 
-    - name: Install python3-pip
-      dnf:
-        name: python3-pip
-        state: present
-
     - name: Install Docker SDK for Python
       pip:
         name: docker
+
+    - name: Pull Nginx image
+      community.docker.docker_image:
+        name: nginx
+        source: pull
 
     - name: Run Nginx container
       community.docker.docker_container:
