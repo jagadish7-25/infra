@@ -1,5 +1,5 @@
 ---
-- name: Install Docker files and Run Container on RHEL 9
+- name: Install Docker CE and Run Container on RHEL 9
   hosts: docker_servers
   become: yes
 
@@ -10,27 +10,34 @@
         name: "*"
         state: latest
 
-    - name: Install container tools
-      dnf:
-        name: container-tools
-        state: present
-
-    - name: Install Docker packages
+    - name: Install required packages
       dnf:
         name:
-          - docker
-          - containerd
+          - dnf-plugins-core
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
           - python3-pip
         state: present
 
-    - name: Start and enable containerd
-      service:
-        name: containerd
-        state: started
-        enabled: yes
+    - name: Add Docker CE repository
+      shell: |
+        dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
-    - name: Start and enable Docker
+    - name: Install Docker CE
+      dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    - name: Reload systemd
       systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Docker
+      service:
         name: docker
         state: started
         enabled: yes
