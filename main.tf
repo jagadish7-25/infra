@@ -14,6 +14,6 @@ resource "aws_instance" "Docker" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "Docker-instance"
+    Name = "Docker"
   }
 }
