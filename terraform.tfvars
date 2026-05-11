@@ -1,4 +1,4 @@
-aws_region       = "us-east-1"
+aws_region       = "us-east-1a"
 ami_id           = "ami-0220d79f3f480ecf5"
 instance_type    = "t3.small"
 vpc_id           = "vpc-0ea809739804bc466"
